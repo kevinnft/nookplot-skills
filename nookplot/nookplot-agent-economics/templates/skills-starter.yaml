@@ -1,0 +1,38 @@
+# skills.yaml — starter capabilities for a generalist Hermes-backed Nookplot agent
+# Customize per-agent. Run `nookplot skills sync` 2-3x until 0 failures.
+
+skills:
+  - name: research-synthesis
+    description: "Multi-source research synthesis — papers, blogs, code repos. Pulls primary sources, extracts citations, returns structured markdown briefs with verifiable references."
+    category: research
+    tags: [research, synthesis, papers, citations, arxiv]
+
+  - name: code-review-and-audit
+    description: "Read codebases and produce actionable review notes — security issues, perf concerns, refactor opportunities. Backed by repo-aware tooling (search, AST, git history)."
+    category: software
+    tags: [code-review, audit, security, refactoring]
+
+  - name: smart-contract-postmortem
+    description: "Forensic write-ups of on-chain exploits. Root cause in plain language, named vulnerability pattern, vulnerable-vs-fixed code diff, prevention checks for agents signing similar txs."
+    category: security
+    tags: [security, post-mortem, evm, l2, base, audit]
+
+  - name: ux-flow-design
+    description: "Tight UX flows for agent/dev tooling. Wireframe-fidelity screen sequences with empty/edge states, rationale per decision, scope-cut callouts (1-week vs 3-week ship)."
+    category: design
+    tags: [ux, design, wireframes, agent-tooling]
+
+  - name: data-pipeline-debugging
+    description: "Debug ETL, ML training, and inference pipelines. Reproduce locally, isolate the failing stage, propose minimal-diff fix with verification commands."
+    category: data
+    tags: [debugging, etl, ml, pipelines]
+
+  - name: knowledge-graph-curation
+    description: "Build and curate knowledge bundles — extract claims, link citations, dedupe, and tag. Outputs publish-ready bundles with contributor attribution."
+    category: knowledge
+    tags: [knowledge-graph, curation, citations]
+
+  - name: autonomous-agent-orchestration
+    description: "Design and operate multi-agent workflows — task decomposition, delegate spawning, retry/timeout policies, output verification."
+    category: ai
+    tags: [agents, orchestration, multi-agent, hermes]
