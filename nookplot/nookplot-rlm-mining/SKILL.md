@@ -221,6 +221,53 @@ The `baseReward` field in challenge detail is the true value (e.g., `"baseReward
 
 - `references/ctypes-openssl-decrypt.md` — Complete copy-paste ctypes AES-256-GCM decryption recipe for the RLM sandbox. Use this as the PRIMARY decryption path (Path B above). Includes EVP function signatures, envelope format, and performance notes.
 
+## Cap Exhaustion Behavior
+
+When the wallet hits its daily cap (standard 12/12, guild deep-dive 1/1), the autonomous response is **prep + schedule**, NOT a multiple-choice prompt.
+
+### Reset window calculation (rolling, not midnight)
+
+Caps reset on a **rolling ~22-24h window from the last accepted submission**, not at UTC midnight. Calculate the next slot like this:
+
+```
+last_submit_utc = timestamp of last submitted trace from `nookplot history` or session log
+next_slot_utc   = last_submit_utc + ~22h  # err on the early side, retry until accepted
+```
+
+Confirmed pattern (May 2026): submission at 01:27 UTC → caps cleared by ~01:30 UTC next day for that wallet. Per-wallet tracking; multi-wallet means each wallet has its own clock.
+
+### Autonomous default when ALL caps hit
+
+User explicitly prefers no-confirmation execution under "gas maksimal" / "Fokus penuh ... mining challenge" requests (see `user-ryzen-preferences`). Do NOT respond with "A/B/C/D, default to D in 1 min" multiple-choice prompts. The right shape is:
+
+1. **Brief status line** — caps hit, reset window, blocked items (1-3 lines, not a full table unless asked)
+2. **Immediately execute** the prep+schedule path:
+   - Pre-craft N trace candidates per wallet to `/tmp/traces_lib_<reset_date>/` (12 standard + 1 guild deep-dive per wallet)
+   - Schedule a cron job at `next_slot_utc - 5min` to auto-submit from the library
+   - Switch to non-mining work that's NOT cap-gated (knowledge publish — custodial unlimited; endorsements within per-wallet 16/24h; off-chain social) while waiting
+3. **Report what was queued + what's running** at the end
+
+Only ask for input when there's a genuine ambiguity (e.g. user requested specific wallet + that wallet is the only one with caps available, but reward < gas). Cap exhaustion alone is NOT ambiguous — the autonomous answer is always prep + schedule.
+
+### Anti-pattern from this class of session
+
+```
+❌ WRONG (what NOT to do when caps hit):
+"Mau gw lakukan yg mana?
+ A. Pre-craft 60 expert traces
+ B. Knowledge publish + citations
+ C. Schedule cron retry
+ D. Kombinasi A+B+C
+ Default ke D kalo ga ada arahan dalam 1 menit."
+
+✅ CORRECT:
+"Caps hit on all 5 wallets (standard 12/12, guild 1/1). Reset ~01:30 UTC May 25 (~22h).
+ Pre-crafting 60 expert traces + scheduling cron auto-submit. Knowledge publish + endorsements running in parallel."
+[then execute]
+```
+
+The 4-option prompt re-invokes the "kbanyakan nanya" anti-pattern from `user-ryzen-preferences`. Caps-hit is a known state with a known best response — execute it.
+
 ## Pitfalls learned (May 2026)
 
 1. **Don't explore the filesystem in step 1.** Jumping to `glob.glob('/workspace/**')` or checking env vars wastes a step and triggers `import os` ban.

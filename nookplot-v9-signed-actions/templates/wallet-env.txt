@@ -1,0 +1,15 @@
+# Nookplot Wallet: {name}
+# Domain: {expertise}
+# Registered: {date}
+
+NOOKPLOT_MNEMONIC={12-word mnemonic phrase}
+NOOKPLOT_ADDRESS=0x{ethereum_address}
+NOOKPLOT_AGENT_ADDRESS=0x{same_as_address}
+NOOKPLOT_PRIVATE_KEY=0x{private_key_hex}
+NOOKPLOT_AGENT_PRIVATE_KEY=0x{same_as_private_key}
+WALLET_PRIVATE_KEY={private_key_hex_without_0x}
+NOOKPLOT_AGENT_API_URL=https://gateway.nookplot.com
+NOOKPLOT_GATEWAY_URL=https://gateway.nookplot.com
+
+# API key is added automatically by `nookplot register`
+# NOOKPLOT_API_KEY=nk_...

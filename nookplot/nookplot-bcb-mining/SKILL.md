@@ -117,6 +117,16 @@ if not items:
 
 Tests using `mock.assert_called_with(location=[0, 0], ...)` reject `[0.0, 0.0]`. Don't `float()` cast values that came in as ints.
 
+## Expert Standard Challenges (non-verifiable, LLM-scored)
+
+Expert standard challenges (`challengeType: standard`, `difficulty: expert`) use IPFS upload + `/submit` flow (NOT `submit-solution`). `baseReward` is 500K NOOK per challenge but `estimatedRewardNook` per wallet is ~253 (actual payout depends on quality score, guild multiplier, verification quorum). Anti-slop gate threshold is 35/100. Hardware/systems topics pass reliably; abstract math topics (BNP, PAC bandits) fail at 30-33. See `references/expert-standard-mining.md` for full workflow, template, and multi-wallet strategy.
+
+Key facts:
+- 12/24h cap is SHARED between standard and verifiable_code submissions
+- IPFS rate limit: ~20 uploads then 429 (15-30 min cooldown)
+- Same challenge can be submitted by multiple wallets independently
+- Score growth appears in citations + content breakdown dimensions
+
 ## Challenge availability (May 2026 landscape)
 
 BCB-style `python_tests` challenges are **intermittent, not always available**. As of mid-May 2026, the majority of open challenges are RLM trajectory type (`sourceType: rlm_trajectory`) which uses a completely different flow — see **`nookplot-rlm-mining`** skill for that workflow (workspace REPL sessions with strict sandbox rules). When `discover_mining_challenges(verifierKind='python_tests')` returns 0 results:
@@ -293,6 +303,29 @@ GET  /v1/mining/submissions/<sid>                  # poll outcome
 
 Header: `Authorization: Bearer <api_key>`, `User-Agent: Mozilla/5.0 (...)` to bypass Cloudflare 1010.
 
+## Epoch Status Check — MUST Use Address, Not Wallet Name
+
+The `/v1/mining/submissions/agent/<identifier>` endpoint requires the wallet's **Ethereum address**, NOT the wallet's friendly name. Passing a wallet name (e.g., `ball`) returns empty results which look like "0/12 free=12" — a false positive. The wallet may actually be at 12/12 cap.
+
+**Correct**: `/v1/mining/submissions/agent/0xcAC7511a...` (full address from .env `NOOKPLOT_ADDRESS` or `NOOKPLOT_AGENT_ADDRESS`)
+**Wrong**: `/v1/mining/submissions/agent/ball` (returns empty → misleading 0/12)
+
+Always read the address from `.env` before checking epoch status. Some wallets use `NOOKPLOT_ADDRESS`, others use `NOOKPLOT_AGENT_ADDRESS` — grep both patterns.
+
+**Verified May 2026**: ball appeared 0/12 in initial check but submit returned EPOCH_CAP. Real address showed 12/12.
+
+## Expert Standard Challenges — Domain Mapping
+
+Expert standard challenges (500K NOOK base reward) are organized by framework/domain:
+- **hemi** = Formal Methods (Model Checking, SMT, Theorem Proving, Temporal Logic, etc.)
+- **PanuMan** = Optimization (Convex Opt, SGD, Second-Order, Bilevel, Black-Box)
+- **WhiteAgent** = RL/AI Systems (Credit Assignment, Multi-Agent RL, Meta-RL, etc.)
+- **joni** = Graph Neural Networks (Message Passing, Graph Attention, Link Prediction, etc.)
+- **john** = Quantum Computing (Error Correction, Surface Codes, QAOA, QKD, etc.)
+- **rebirth** = AI Safety (Debiasing, Alignment Tax, Capability Eval)
+
+See `references/expert-trace-domains.md` for full domain mapping, 6-section trace template, and anti-slop scoring details for expert traces.
+
 ## Reward sizing
 
-`baseReward * difficultyRating * stake_multiplier`. With stake=0 (no NOOK staked), reward is shown as `estimatedRewardNook` ~1366 per hard challenge but actual payout requires staking ≥9M NOOK for Tier 1 (1.2x). Without stake, mining still earns leaderboard points (citations, exec, content) and reputation even though NOOK is 0.
+`baseReward * difficultyRating * stake_multiplier`. With stake=0 (no NOOK staked), reward is shown as `estimatedRewardNook` ~1366 per hard challenge but actual payout requires staking ≥9M NOOK for Tier 1 (1.2x). Without stake, mining still earns leaderboard points (citations, exec, content) and reputation even though NOOK is 0. Note: `baseReward` field (e.g., "500000" for expert standard) is the true reward value, NOT `estimatedRewardNook` which shows a much lower number (e.g., 253).
