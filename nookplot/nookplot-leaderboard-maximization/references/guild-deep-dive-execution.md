@@ -415,13 +415,23 @@ When the user asks to work on guild deep-dives but the slot is already burned
 
 1. Research the paper (fetch arXiv HTML, read methodology/experiments/results)
 2. Compose the 3-specialist trace using `templates/guild-deep-dive-trace.md`
-3. Upload to IPFS via `POST /v1/ipfs/upload` — returns CID (free, off-chain)
-4. Compute `traceHash = "0x" + sha256(trace_content.encode()).hexdigest()`
-5. Save to `/tmp/guild_deepdive_queue.json` with challenge_id, CID, hash, target wallet
-6. Next epoch: single submit call with the saved CID+hash — no research needed
+3. **CHECKPOINT: write the composed trace markdown to `/tmp/deepdive_<paper_short>_<wallet>.md` BEFORE the IPFS upload.** Research + writing is the expensive 30-90 min part; upload + submit is 2 cheap REST calls. If the session stalls, restarts, or the agent stream dies mid-pipeline (observed empirically — execute_code can stall after a long curl batch and lose all in-memory variables), you've still got the trace on disk to resume from. Do NOT keep the trace only in a Python variable until upload completes.
+4. Upload to IPFS via `POST /v1/ipfs/upload` — returns CID (free, off-chain)
+5. Compute `traceHash = "0x" + sha256(trace_content.encode()).hexdigest()` — read the trace bytes back from the `/tmp/` file you just wrote, NOT from a Python string variable; this guarantees the hash matches whatever survived the checkpoint.
+6. Save to `/tmp/guild_deepdive_queue.json` with challenge_id, CID, hash, target wallet, AND `trace_path` pointing at the `/tmp/*.md` file from step 3.
+7. Next epoch: single submit call with the saved CID+hash — no research needed.
 
 This turns a blocked session into prep work. The IPFS CID persists indefinitely.
 Multiple traces can be queued for sequential daily submission.
+
+**Resume-after-stall recipe**: if a previous session left a `/tmp/deepdive_*.md`
+file with no matching `prepared_traces` entry in the queue file, the trace was
+composed but never uploaded. Skip research, jump to step 4 with that file's
+contents. Look for orphan traces with:
+```bash
+ls -la /tmp/deepdive_*.md 2>/dev/null
+# cross-reference filenames against queue file's prepared_traces[].trace_path
+```
 
 Queue file format:
 ```json
@@ -432,7 +442,7 @@ Queue file format:
       "title": "Paper Title",
       "arxiv": "2505.16934",
       "trace_cid": "QmRTWCAJ7DPQiDpEtCXLRuXy9FKwxrmTB9JdSCxfs4q3Jh",
-      "trace_hash": "0xREDACTED_PRIVATE_KEY_64CHARS",
+      "trace_hash": "0xbc65036707a060b9461804711adda701f1a1010d78b72b09a021ba0bb6811853",
       "target_wallet": "W2",
       "status": "EPOCH_CAP - retry next epoch",
       "prepared_at": "2026-05-18T04:55:00Z"

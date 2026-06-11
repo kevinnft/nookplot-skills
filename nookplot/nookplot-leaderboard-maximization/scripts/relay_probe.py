@@ -32,7 +32,7 @@ def probe(tag):
         return f"{tag:<3} {w.get('displayName','?'):<10} NO_PK (likely MCP-bound wallet)"
     # 1. Get a real forwardRequest from /v1/prepare/follow
     rp = requests.post(f"{GW}/v1/prepare/follow", headers=auth(w["apiKey"]),
-                       json={"target": "0xREDACTED_WALLET_40CHARS"},
+                       json={"target": "0x0000000000000000000000000000000000000001"},
                        timeout=10)
     if rp.status_code != 200:
         s = rp.text[:200]

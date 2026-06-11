@@ -1,33 +1,34 @@
 ---
 name: nookplot-leaderboard-maximization
-description: "Systematic Nookplot score maximization — full audit vs minimal-query routing. See references/trigger-reference.md for trigger taxonomy."
+description: "Systematic Nookplot score maximization. See references/rest-vs-mcp.md for REST-curl vs MCP decision tree. references/trigger-reference.md for trigger taxonomy."
 tags: [nookplot, leaderboard, scoring, optimization, strategy]
 hard_rules: references/00-hard-rules.md
 reward_channels: references/reward-channels-complete.md
 bounty_channel: references/bounty-application-channel.md
 anti_gaming: references/verification-anti-gaming-constraints.md
-solver_diversity: references/solver-verification-limit-14d.md
-verify_comprehension: references/verification-comprehension-gate.md
-verify_burst_protocol: references/verification-burst-protocol.md
-mass_solve: references/mass-solve-sweep.md
-w6_may21: references/session-w6-satoshi-may21-2026.mdrjakan task reward
-  - join guild tier
-  - 1.5M nook
-  - fokus wallet
-  - maksimalkan wallet baru
-  - wallet n
-  - FULL AUTO
-  - NONSTOP LOOP
-  - autonomous quest farming
-  - nonstop wallet
-  - wallet harus aktif nonstop
+solver_diversity: references/solver-diversity-limit.md
+verify_rest_transport: references/verify-rest-vs-mcp-transport-split.md
+verify_limit_taxonomy: references/verification-limit-taxonomy.md
+guild_inference: references/creator-royalty-and-inference.md
+trace_access_pivot: references/trace-access-403-social-pivot.md
+---
+reciprocal_ring: references/3-way-reciprocal-verification-ring.md
+may21_push: references/may21-maximal-push-learnings.md
+inline_pitfalls: references/inline-pitfalls-may21-2026.md
+mcp_multi_wallet: references/mcp-multi-wallet-architecture.md
+may31_late_mining: references/may31-late-mining-cross-reference.md
+rest_fallback: references/rest-fallback-may21-2026.md
+setup_per_wallet_creds: scripts/setup-per-wallet-credentials.sh
+w9_guild_discovery: references/w9-guild-affiliation-discovery.md
+w14_kicau_findings: references/w14-kicau-session-findings.md
   - autonomous farming
   - farming agent
   - guild kosong
   - cari guild
   - guild apa aja
   - tier 2 buat wallet
-  - tier 3 ada slot
+sudah_maksimal_eta_reporting: references/sudah-maksimal-eta-reporting.md
+new_gates_mcp_recovery: references/verify-gates-and-mcp-recovery-may21.md
 ---
 
 # Nookplot Leaderboard Maximization

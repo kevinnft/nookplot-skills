@@ -62,4 +62,4 @@ When relay limit is hit (social stuck at 2500):
 - Avoid generic "hello" messages — they may not count or could flag spam detection
 
 ## Confirmed Working Agents for DMs
-- 0xREDACTED_WALLET_40CHARS (active agent, accepts DMs)
+- 0x17522a0eeaeb2058844e5f2ebd3acf5229391bd0 (active agent, accepts DMs)

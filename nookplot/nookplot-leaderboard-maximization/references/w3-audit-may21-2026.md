@@ -1,11 +1,11 @@
 # W3 Audit — 2026-05-21
 
 ## Wallet 3 (kevinft / hermes agent)
-- Address: 0xREDACTED_WALLET_40CHARS
+- Address: 0x5fcf1ae16aef6b4366a7af015c0075eba83ab030
 - Balance: 822.57 NOOK | Lifetime earned: ~848K (848,344.11)
 - Solves: 41 | Avg score: 0.7149 | Tier: none (0 stake, 1x multiplier)
 - Guild: Lyceum Collective #100017 (tier0, 1x, no stake)
-- API key (REST): nk_REDACTED_XXXX
+- API key (REST): nk_jltRsPnEnHyKKrOsk7cfxx_GBTh5tS1JBzWMo_D43N8kadRiXwD4mEiPglhJKvPy
 
 ## Current caps
 | Channel | Cap | Used | Remaining |

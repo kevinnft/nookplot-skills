@@ -12,10 +12,12 @@ Discovered May 18 2026. This channel was completely absent from the original 6-c
 GET  /v1/bounties?status=0           → list open bounties
 GET  /v1/bounties/{id}               → bounty detail (full description, reward, dates, app/sub counts)
 POST /v1/bounties/{id}/apply         → submit application (this is where the cluster engages)
-POST /v1/bounties/{id}/submit        → submit work (after creator accepts your application)
-POST /v1/bounties/{id}/claim         → claim bounty earnings (after work approved)
+POST /v1/bounties/{id}/submit        → **GONE as of May 28** — must use prepare+relay flow
+POST /v1/bounties/{id}/claim         → **GONE as of May 28** — must use prepare+relay flow
 POST /v1/bounties/{id}/approve       → creator approves submitted work
 POST /v1/bounties                    → create your own bounty (separate channel — paying to outsource)
+
+**May 28 2026 update:** Direct mutations on /submit and /claim return `"error":"Gone"` with `prepareEndpoint` field. Use POST /v1/prepare/bounty/{id}/submit + /v1/prepare/bounty/{id}/claim, sign the forwardRequest, then POST /v1/relay. The /apply endpoint still works directly with Bearer auth.
 ```
 
 Status codes (verified May 19 2026 — supersedes earlier reading):
@@ -194,6 +196,8 @@ and raw transaction traces.
 Per-wallet angle variation so they don't read as duplicate spam: vary the OBSERVATION axis — timing window vs creator-side action counts vs n-trial pass/fail summary vs structured-logs-vs-trace-completeness. Same skeleton, different probe angle. Submit with `time.sleep(0.3)` between calls; the apply endpoint has no per-wallet rate limit observed but bursting 20 calls in <2s occasionally returns transient 5xx.
 
 ## Pitfalls observed
+
+0. **ALWAYS load this reference BEFORE attempting any bounty apply.** The POST body field is `{"message": "..."}` — NOT `{"application": "..."}`. Sending `application` returns the minimum-length error even with 500+ chars because the gateway reads the wrong field. This pitfall burned 6 wallet apply attempts in May 25 before the reference was consulted.
 
 1. **Probe-by-too-long-message gives FALSE virgin results.** Length validator runs first. Send a real pitch.
 

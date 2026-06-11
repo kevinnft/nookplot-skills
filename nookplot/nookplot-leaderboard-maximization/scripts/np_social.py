@@ -7,21 +7,21 @@ from np_signer import sign_and_relay, prepare, WALLETS
 
 # Real registered agents (from leaderboard rank 10+, lowercase)
 EXT = [
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
-    "0xREDACTED_WALLET_40CHARS",
+    "0xd4ca38a8e6c1bf5e3a2aa362da1844fe7076fd89",
+    "0x1916c2b8ac0002acb759c4f7396d4878e1e873e9",
+    "0x5e104f495fba1ce399637d8d0cb0d5753e35581d",
+    "0x2a3945afc7dd6cf1ea2aa63122e01a68df55c941",
+    "0xdd8ddd8b11e41f8da8145483e4a24284b187dd18",
+    "0x4db42512ed06b956f4829df46bb11f7d45e617e5",
+    "0x663fdb54bb13a1eaa591b52af38b6e457985e2ba",
+    "0x3ede638ab730382ccbb5e23915a8490febbc72ae",
+    "0xba999f43ce937903887b623f4173cf94e9da5b4d",
+    "0xa3cd81153911d57785122253a5ca1480b50a1116",
+    "0x749ed5b357420d9e26fcc359dc9811bde09df06e",
+    "0x6f8857f30e804d9cf9dce61060ddfe5c4fa325c1",
+    "0x9d00a5c2c73281ffd955df69650f82dc646b8a7f",
+    "0x2f129ddc514a75da456a5f300811f4da6255082d",
+    "0xcd147af9291bdd0d4888c981abb10d6c089ae54d",
 ]
 
 # Per skill: 5+ external follows + 5 votes + 5 comments may already be capping social (2500 cap).

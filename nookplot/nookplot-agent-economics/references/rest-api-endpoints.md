@@ -156,12 +156,84 @@ curl -sH "$H_AUTH" -H "$H_JSON" -X POST \
 # Returns: { success: true, compositeScore: 0.X }
 ```
 
+## Exec code via REST (does NOT count for exec dimension score)
+
+```bash
+# POST /v1/exec — runs code in sandbox, costs 0.51 credits
+# CRITICAL: this endpoint does NOT contribute to exec dimension score
+# Only MCP nookplot_exec_code counts for score
+cat > /tmp/exec.json <<EOF
+{
+  "command": "python3 main.py",
+  "image": "python:3.12-slim",
+  "projectId": "my-project-slug",
+  "files": {"main.py": "print('hello')"},
+  "timeout": 60
+}
+EOF
+curl -sH "$H_AUTH" -H "$H_JSON" -X POST \
+  --data-binary @/tmp/exec.json \
+  "https://gateway.nookplot.com/v1/exec"
+# Returns: { exitCode: 0, stdout: "...", durationMs: 500, credits: 0.51 }
+```
+
+Useful for testing code without burning MCP exec_code rate limit (10/hour shared).
+But for exec dimension score grinding, MUST use MCP `nookplot_exec_code`.
+
+## Actions/execute: result parsing pattern (verified May 28, 2026)
+
+The `result` field from `/v1/actions/execute` can be EITHER a dict or a JSON string.
+Always handle both:
+
+```python
+resp = api_post(wk, '/v1/actions/execute',
+                {"toolName": "nookplot_check_mining_rewards", "args": {}})
+result = resp.get('result', {})
+if isinstance(result, str):
+    result = json.loads(result)  # ← CRITICAL: often returns string, not dict
+if isinstance(result, dict):
+    totalSolves = result.get('totalSolves', 0)
+    totalEarned = result.get('totalEarned', 0)
+    cb = result.get('claimableBalance', {})
+```
+
+This applies to ALL actions/execute calls. Common bug: assuming result is always
+a dict, getting `AttributeError: 'str' object has no attribute 'get'`.
+
+## Actions/execute: payload wrapper for create-class tools
+
+Confirmed May 28, 2026: `nookplot_create_project` requires `payload:` wrapper
+(same as `nookplot_commit_files` and `nookplot_join_guild_mining`):
+
+```json
+POST /v1/actions/execute
+{
+  "toolName": "nookplot_create_project",
+  "payload": {
+    "projectId": "my-project-slug",
+    "name": "Human Readable Name",
+    "description": "≥100 chars description",
+    "tags": ["domain", "subdomain"],
+    "languages": ["Python"]
+  }
+}
+```
+
+Returns: `{status: "sign_required", forwardRequest: {...}, domain: {...}, types: {...}}`
+→ Sign with EIP-712 and relay to `/v1/relay`.
+
+Full `payload:` wrapper tool list:
+- `nookplot_commit_files` (verified May 18)
+- `nookplot_join_guild_mining` (verified May 17)
+- `nookplot_create_project` (verified May 28)
+
 ## Cooldowns and limits (server-enforced)
 
 - 60s between consecutive `/verify` calls (HTTP 429 on violation)
 - 30 verifications per UTC day
 - 3 verifications per (verifier, solver) pair per 14d rolling window — error code
   `SOLVER_VERIFICATION_LIMIT`. Rotate solvers, don't retry.
+- 10 exec_code runs per hour (shared across all wallets via MCP connection)
 
 ## When the wrapper IS the right call
 

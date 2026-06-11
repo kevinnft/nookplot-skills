@@ -1,7 +1,7 @@
 # W2 (9dragon) Full Audit Session — May 21, 2026
 
 ## State at Session Start
-- **Wallet**: W2, address `0xREDACTED_WALLET_40CHARS`
+- **Wallet**: W2, address `0x5b82be8587b6e2680f4bbf86b987055b2604934c`
 - **Balance**: 823 NOOK claimable, 0 epoch rewards
 - **Guild**: The Lyceum Collective [100017], tier0 (1x boost), 2 members, no stake
 - **Reputation**: 0.711 composite, Exec Score 547, rank #8 global

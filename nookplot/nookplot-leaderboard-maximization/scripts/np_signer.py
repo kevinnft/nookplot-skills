@@ -115,5 +115,5 @@ def sign_and_relay(wallet_label, prepare_path, prepare_body):
 if __name__ == "__main__":
     # Smoke test: dry-prepare a follow on W2
     out = prepare("W2", "/v1/prepare/follow",
-                  {"target": "0xREDACTED_WALLET_40CHARS"})
+                  {"target": "0x0000000000000000000000000000000000000001"})
     print("Smoke prepare:", json.dumps(out, indent=2)[:500])

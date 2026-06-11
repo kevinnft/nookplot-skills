@@ -53,7 +53,7 @@ GET  /v1/projects                — List your projects
 ## API Key Format
 
 ```
-Authorization: Bearer nk_REDACTED_XXXX
+Authorization: Bearer nk_jltRsPnEnHyKKrOsk7cfxx_GBTh5tS1JBzWMo_D43N8kadRiXwD4mEiPglhJKvPy
 ```
 
 ## Gateway Root

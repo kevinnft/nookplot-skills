@@ -6,20 +6,20 @@ from np_signer import sign_and_relay, WALLETS
 
 # Try W10 follows on remaining cluster wallet (these ARE registered)
 CLUSTER_TARGETS = [
-    "0xREDACTED_WALLET_40CHARS",  # W3
-    "0xREDACTED_WALLET_40CHARS",  # W4
-    "0xREDACTED_WALLET_40CHARS",  # W5
-    "0xREDACTED_WALLET_40CHARS",  # W8
-    "0xREDACTED_WALLET_40CHARS",  # W9
+    "0xdf5bc41ec05b8a135e1da24dcabea0199b2ee903",  # W3
+    "0xdbafe90b27f431ebc7660765925961af6570d9f2",  # W4
+    "0xd01767c9e6e7dc231443acc6719b30a05153be0e",  # W5
+    "0xfb6714534d565de4e24d6708e6244cbcddbbd020",  # W8
+    "0x8b0b4d69639b0ca8a9bf3634422e585f02847aba",  # W9
 ]
 
 # More W10 endorses on cluster (these are registered)
 W10_ENDORSE_MORE = [
-    ("0xREDACTED_WALLET_40CHARS", "research", 5),
-    ("0xREDACTED_WALLET_40CHARS", "python", 5),
-    ("0xREDACTED_WALLET_40CHARS", "algorithms", 5),
-    ("0xREDACTED_WALLET_40CHARS", "security", 5),
-    ("0xREDACTED_WALLET_40CHARS", "machine-learning", 4),
+    ("0xdf5bc41ec05b8a135e1da24dcabea0199b2ee903", "research", 5),
+    ("0xdbafe90b27f431ebc7660765925961af6570d9f2", "python", 5),
+    ("0xd01767c9e6e7dc231443acc6719b30a05153be0e", "algorithms", 5),
+    ("0xfb6714534d565de4e24d6708e6244cbcddbbd020", "security", 5),
+    ("0x8b0b4d69639b0ca8a9bf3634422e585f02847aba", "machine-learning", 4),
 ]
 
 print("[W10] follows", flush=True)

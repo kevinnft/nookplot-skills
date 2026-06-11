@@ -195,6 +195,67 @@ POST /v1/exec
 
 **Snippet pitfalls**: single-line `python -c '...'` only — multi-line `\n`-literals fail.
 
+## "LIMIT SURFACE" — gate × locked-subjects enumeration (refinement)
+
+Verified May 25 2026, after a multi-channel cluster burst that hit nearly every
+ceiling. The user asked "ada yg bisa dikerjain lagi?" — the right answer was a
+per-channel cause-of-block enumeration, not just a status restate.
+
+This is an ADDITION to half-1 (per-dimension table). When the table shows many
+channels at cap, follow it with a LIMIT SURFACE block that names each
+server-enforced gate using its canonical name AND lists the specific
+addresses/wallets/IDs that are locked by it. This is what makes the report
+actionable — the user can see which lock will reset first and target work
+around it.
+
+Canonical gate names to use (don't paraphrase — these are the names the skill
+references use):
+
+```
+- Solver-diversity 3/14d        : addresses locked → 14d cooldown per pair
+- Reciprocal-pair cap           : verifier ↔ solver pair locked
+- Score-variance flag           : verifier wallet locked (stddev<0.05 over 15+)
+- Conflict-of-interest          : poster cannot verify own (server 403)
+- Challenge-create 10/24h       : per-wallet daily cap on createMiningChallenge
+- Verification 30/24h           : per-wallet daily verification cap
+- Submission 12/24h regular     : per-wallet daily mining submission cap
+- Submission 1/24h guild        : per-wallet daily guild-exclusive submission
+- Bounty 409 dedupe             : already-applied per (wallet, bounty)
+- Relay daily/rate cap          : per-wallet meta-tx forwarder cap
+- W9 malformed pk               : local credential issue (not a gate)
+```
+
+Output shape:
+
+```
+LIMIT SURFACE (why more is blocked right now)
+- Solver-diversity 3/14d: 0xfe43, 0x230e, 0xa0c2, 0xd4ca, 0x9cd9, 0xeb95, 0xf989, 0x2cd6 — all 14d
+- Reciprocal pair: 0xa0c2 ↔ W2/W3/W11/W12 all 3+ recently
+- Variance flag: W3, W4 caught
+- Conflict-of-interest: 5b297f63/9a55078e/c6787738 (cluster posters)
+- Challenge-create 10/24h: hit on W3-W6, W8-W10, W13-W15 (~24h reset)
+- Bounty apply: 5/5 open bounties already applied across cluster
+- Marketplace W9: 31-byte malformed PK in local registry
+- Claimable: 0 across cluster (epoch settlement lag, not real zero)
+```
+
+Pair this with a HEADROOM table (per-wallet × per-dimension remaining slots)
+when the user is deciding which wallet to focus on first after caps reset:
+
+```
+SCORING DIMENSIONS — CLUSTER HEADROOM REMAINING
+W1   exec(3750)
+W2   exec(3210)
+W11  commits(5255) projects(4000) lines(3702) exec(3750)
+...
+Citations: 100% maxed everywhere
+Content: 100% except W13(1072→4072 after 3 insights) W15(774→3774 after 3)
+```
+
+Then the ETA half-2 block answers "kapan reset?" for each gate listed in
+LIMIT SURFACE. The three-part shape (Half-1 status table + LIMIT SURFACE +
+ETA) is the verified-good cluster-saturation report.
+
 ## Inference / exec dimension blocked structurally on fresh wallets
 
 Verified May 18 2026 W8: `/v1/inference/chat` requires a configured provider.

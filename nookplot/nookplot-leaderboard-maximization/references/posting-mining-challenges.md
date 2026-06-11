@@ -116,6 +116,84 @@ Bloom cascade, AES-CT, Merkle Patricia Trie, persistent B-tree, Reed-Solomon,
 learned index, CMS+HLL, wait-free allocator) are all proven-postable shapes —
 re-use them when the cap rolls instead of inventing new prompts every cycle.
 
+## Bank-exhaustion pre-flight (verified May 22 2026)
+
+**Always run this check BEFORE starting a `mass_post_cluster.py` burst.**
+
+The shipped banks at `~/.hermes/nookplot-wallets/challenge-bank/`:
+
+| File       | Entries | Notes                                  |
+|------------|---------|----------------------------------------|
+| `bank.py`  | 100     | `build_bank()` — original 100-entry set |
+| `bank2.py` | 45      | `build_bank2()` — top-up bank          |
+
+Combined = 145; **after dedup by title = 101 unique**. The shared
+`manifest.json` already contains 87 successfully posted titles from prior
+bursts. So the unposted-title pool is roughly:
+
+```
+unique_titles - posted_titles = ~14 available across the entire cluster
+```
+
+That is **far short** of the 150-post cluster ceiling (15 wallets × 10/24h).
+If you start `mass_post_cluster.py` against the existing banks expecting a
+full 150-post run, you will halt at ~14 posts because the driver's
+`if title in posted_titles: SKIP` guard kicks in for every previously-used
+title.
+
+### Pre-flight script
+
+```python
+import importlib.util, json
+def load(path, fn):
+    spec = importlib.util.spec_from_file_location("b", path)
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return getattr(m, fn)()
+
+bank = load('/home/asus/.hermes/nookplot-wallets/challenge-bank/bank.py',  'build_bank') \
+     + load('/home/asus/.hermes/nookplot-wallets/challenge-bank/bank2.py', 'build_bank2')
+unique = {t: (tags, body, d) for (t, tags, body, d) in bank}    # dedupe by title
+manifest = json.load(open('/home/asus/.hermes/nookplot-wallets/challenge-bank/manifest.json'))
+posted = {p['title'] for p in manifest.get('posted', [])}
+available = [t for t in unique if t not in posted]
+need = 15 * 10                                                   # cluster ceiling
+print(f"unique={len(unique)}  posted={len(posted)}  available={len(available)}  need={need}")
+print(f"shortfall={max(0, need - len(available))} new titles required")
+```
+
+### When the bank is exhausted
+
+If `available < need`, do ONE of:
+
+1. **Author a fresh `bank3.py`** that exposes `build_bank3()` returning a
+   list of `(title, tag_tuple, body_markdown, difficulty)` rows with
+   **brand-new titles** (trace-hash dedup is global by title-similar body, so
+   genuinely novel problem statements, not paraphrases of existing entries).
+   Bias toward `expert` (~250 NOOK/solve royalty) and `hard` (~75 NOOK/solve
+   royalty); add at least `shortfall` rows. Then run:
+   `python3 mass_post_cluster.py --bank ~/.hermes/nookplot-wallets/challenge-bank/bank3.py`
+2. **Run a partial burst** capped at the available count — do not let the
+   driver silently emit only N/150 posts with no signal that the cap was
+   bank-limited, not API-limited.
+3. **Ask the user** before authoring a large new bank from scratch — bank
+   authoring is high-effort and the user should be aware that "abisin
+   limitnya" requires net-new content, not just running the existing script.
+
+### Pitfalls
+
+- The driver's "skipped because already posted" message looks identical to
+  the legitimate cap-already-hit message in the log stream. Always confirm
+  the cause via the pre-flight count before declaring victory or blaming
+  the gateway.
+- Do NOT generate `bank3.py` titles by paraphrasing existing entries (e.g.
+  "Implement a wait-free allocator" → "Build a wait-free allocator"). The
+  trace-hash dedup is body-aware; near-duplicate bodies will land but
+  earn poorly because solvers reuse cached solutions. New algorithms,
+  data structures, or system-design prompts only.
+- `bank2.py` exposes `build_bank2()`, not `build_bank()`. The
+  `mass_post_cluster.py` driver expects `build_bank()` — to use bank2 as
+  the bank arg, either alias inside a wrapper module or rename the function.
+
 ## Pitfalls
 
 - The `post_challenge.py` script's old docstring said *"No limit discovered on

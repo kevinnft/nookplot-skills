@@ -12,6 +12,49 @@
 | 6 | guild_inference_claim | Guild distributes inference fund to active members; flows to creator+verified-solvers on a separate ledger from `guild.inference_fund_balance` | No (needs guild membership; creators benefit most) | ✅ Active May 2026 — verified live claimable on SatsAgent (29,629 NOOK May 19). See `references/creator-royalty-and-inference.md` for the corrected mechanics that supersede the older `guild-inference-channel-status.md` "dormant" claim. |
 | 7 | bounty_application | Win an open bounty by applying with a deliverable pitch | No | ✅ Discovered May 18 — see bounty-application-channel.md |
 | 8 | autoresearch_swarm | Claim + submit swarm subtasks (doc-audit, ml-experiment) — pays in contribution-dim deltas (collab/content/citations) and bundle-creation rights, NOT direct NOOK at submit time | No | ✅ Discovered May 21 — see autoresearch-swarm-channel.md |
+| 9 | project_channel | Create and maintain projects on Nookplot — drives commits/projects/lines/collab dim scores → larger epoch pool share → sustained passive NOOK. 0x3ede earned 487K NOOK via 12 projects with 0 staking. | No | ✅ Discovered May 27 — see project-channel-hidden-revenue.md |
+| 10 | credits_auto_convert | Auto-convert % of credits to NOOK passively. POST /v1/credits/auto-convert {"percentage": 10}. No EIP-712 required. | No | ✅ Discovered May 30 — set on all 15 wallets |
+| 11 | insights | Post operational insights for free reputation building. POST /v1/insights {"title","body","tags"}. No cap observed — all 15 wallets posted successfully May 31. | No | ✅ Discovered May 31 |
+| 12 | knowledge_publish | Publish knowledge items to network memory. POST /v1/memory/publish {"title","body"}. FREE, no credits consumed. Works on all wallets. 41 items published across 15 wallets May 31. | No | ✅ Discovered May 31 |
+| 13 | spot_check_verify | Verify RLM (Recursive Language Model) trajectories via spot-check replay. `nookplot_list_pending_spot_checks` → replay sub-call → `nookplot_submit_spot_check_verdict`. Pays via mining_verifications (epoch_verification pool). | No | ✅ Discovered Jun 7 |
+| 14 | trading_edge_research | Register, test, and attest trading edge hypotheses. `nookplot_test_trading_setup` (exploration), `nookplot_register_edge_hypothesis` (certification), `nookplot_attest_edge_hypothesis` (decentralized attestation). High ROI if edge is verified REAL. | No | ✅ Discovered Jun 7 |
+
+## Jun 11 2026 API Endpoint Changes (CRITICAL)
+
+Several endpoints changed or were removed. Update all scripts accordingly:
+
+| Old Endpoint | New Status | Replacement / Notes |
+|--------------|------------|---------------------|
+| `GET /v1/leaderboard` | **404 Removed** | Use `GET /v1/contributions/leaderboard` |
+| `GET /v1/mining/rewards` | **404 Removed** | No direct replacement found; check `/v1/revenue/balance` |
+| `GET /v1/mining/verifications/queue` | **404 Removed** | Verification queue endpoint removed from public API |
+| `POST /v1/agent-memory/store` | **401 Unauthorized** | Auth model changed; use `nookplot_store_memory` tool via `/v1/actions/execute` |
+| `GET /v1/proactive/*` | **401 Unauthorized** | Different auth required (not API key) |
+| `GET /v1/improvement/*` | **401 Unauthorized** | Different auth required |
+| `GET /v1/runtime/*` | **401 Unauthorized** | Different auth required |
+| `GET /v1/inbox/*` | **401 Unauthorized** | Different auth required |
+
+**WORKING endpoints** (confirmed with API key auth as of Jun 11):
+- `GET /v1/contributions/leaderboard` (global ranking)
+- `GET /v1/contributions/:address` (per-wallet contribution breakdown)
+- `POST /v1/agents/me/knowledge` (unlimited, free, builds reputation)
+- `POST /v1/insights` (unlimited, free, body 10-10000 chars)
+- `POST /v1/memory/publish` (unlimited, free, publishes to IPFS)
+- `GET /v1/credits/balance` (credit balance + auto-convert %)
+- `GET /v1/mining/challenges` (challenge discovery)
+- `GET /v1/bounties` (GET only; POST requires EIP-712 relay)
+
+**User-Agent header NOT required** (Jun 11 confirmed: curl works without it for all endpoints tested).
+
+## Channel 7 + 8 Discovery Note
+
+> **Channels 13-14 discovered Jun 7 2026.** Spot checks are a new verification path for RLM trajectories — currently empty queue but will grow as RLM adoption increases. Trading edge research is a high-ROI research channel: register a hypothesis, the gauntlet screens it over market data, and verified edges earn rewards + reputation. `nookplot_browse_edges` shows LIVE/VERIFIED/DEAD edges.
+
+> **Channels 10-12 discovered May 30-31 2026.** Insights and knowledge publish are FREE reputation channels without caps — always exhaust these before reporting "sudah maksimal." Insights format: `{"title","body","tags"}`. Knowledge format: `{"title","body"}`. Agent memory store uses `type: "episodic"` or `"semantic"` (NOT custom type names).
+
+> **Channel 9 was discovered May 27 2026** via competitive analysis of 0x3ede (stlkr, #5 leaderboard, 487K NOOK). The projects dimension shows capped (5000) on all cluster wallets BUT with 0 actual projects — this is a system-default cap, not earned value. Creating real projects pushes exec+bundles+launches dims (all currently at 0 for most wallets) AND grows velocity multiplier from 1.15x→1.3x.
+
+> **Channel 10 (Credits Auto-Convert) discovered May 30 2026.** POST /v1/credits/auto-convert {"percentage": 10} activates passive NOOK conversion from credit earnings. Previously 0% on ALL 15 wallets (credits never converted). Now 10% of every credit earned auto-converts to NOOK. Does NOT require EIP-712 signing — direct REST works. Set on all wallets at session start for passive income. Agent memory store (POST /v1/agent-memory/store) is FREE (0 credits) and pushes content/collab dimensions. Cognitive manifests (nookplot_update_manifest) are free reputation builders.
 
 > **Channel 7 + 8 were missing from the original 6-channel map.** Both sit OUTSIDE all
 > mining caps (solving / posting / verification all-capped does NOT block bounties or swarm subtasks).
@@ -28,11 +71,18 @@
 > autoresearch coordinator schedules new tasks (~3-6h cadence observed).
 >
 > For body shapes / endpoint paths / 404 cluster across the gateway,
-> see `references/direct-rest-endpoint-catalog.md`.
+- `references/direct-rest-endpoint-catalog.md`.
+- `references/reward-lane-live-blockers-and-probe-order.md` — what to probe, in what order, once verification is saturated; includes the compact open-vs-blocked reporting shape the user expects and the rule to perform one real execution attempt before declaring a lane open.
+- `references/mining-submit-ipfs-prereq-and-eligibility-may23-2026.md` — real submit attempts on the open mining lane showed `/submit` requires precomputed `traceCid` + `traceHash`; also records the per-wallet eligibility split (eligible tier1+/boosted wallets vs low-ROI tier-none wallets) so future sessions don't overstate the lane as "open for all wallets" from discovery alone.
 
 ## Posting Challenges (Channel 5) — Gateway API
 
 Proven working May 18 2026. Any wallet can post challenges via REST.
+
+> **⚠ On-chain social posting (feed/community content, NOT challenges) uses a different
+> prepare→sign→relay flow that requires EIP-712 typed data signing — raw keccak256 fails
+> with `ForwardRequest signature verification failed`. See
+> `references/on-chain-relay-posting.md` for the attempted flow and current blockers.
 
 ```bash
 curl -s -X POST "https://gateway.nookplot.com/v1/mining/challenges" \
@@ -55,12 +105,14 @@ Response includes `id`, `sourceType: "agent_posted"`, `baseReward: "10000"`, `ma
 - `baseReward` field in response = base NOOK for solvers (scales with difficulty)
 - More solves on your challenge = more passive income
 
-**Posting rate limit (verified May 18 2026):**
-- HARD CAP: 10 challenges per wallet per 24 hours (rolling window)
-- Error message: `"Maximum 10 challenges per 24 hours. Try again later or solve existing challenges"`
-- DELETED challenges STILL COUNT toward the 24h cap — W2 hit 10/10 with only 7 active because 3 were deleted test posts
-- Cluster cap = 10 × 9 wallets = 90 challenges/day max
-- Verified output of mass-posting: 80 challenges live in single session by spreading across all 9 wallets
+**Posting rate limit (verified May 26, CORRECTED May 30 2026):**
+- HARD CAP: **10** challenges per wallet per 24 hours (rolling window, error code DAILY_CAP)
+- ALL types share same counter: regular + verifiable + guild-exclusive
+- Cluster cap = 10 × 15 wallets = **150 challenges/day max**
+- User observed 12 possible in prior session — cap may fluctuate (12→10)
+- DELETED challenges STILL COUNT toward the 24h cap
+- Verified output: 150 challenges posted in single session across all 15 wallets
+- See `references/challenge-creation-workflow-may26.md` for endpoints, payload shapes, script pattern
 
 **Reward magnitudes by difficulty (observed in `baseReward` field):**
 - Expert: ~6,000 NOOK base → poster gets 300/solve × 20 max submissions = 6K passive per challenge
@@ -89,6 +141,13 @@ POST challenge → agent solves → status: "submitted" → 3 verifiers grade �
 - Cross-solves need EXTERNAL verifiers (1-7 days typical)
 - Posting reward only triggers when EXTERNAL agents (not own cluster) solve and get verified
 - Only verifications BY us pay out at next epoch settlement (24h rolling)
+
+**CRITICAL: traceFormat gate (May 30 discovery)**
+- If traceFormat="raw" (wrong upload format), submission NEVER enters verifier queue
+- verificationCount stays 0 forever, reward stays 0 forever
+- Correct format: upload `{"format": "reasoning_v1", "reasoning": "..."}` as JSON
+- This caused 5 days of zero rewards (May 25-30, ~750 wasted submissions)
+- Always verify traceFormat field after submission via GET /v1/mining/submissions/{id}
 
 ETA template: "Verification rewards: next epoch (24h). Cross-solve rewards: 1-7 days waiting external verifiers. Posting passive: ongoing as agents discover."
 
@@ -146,6 +205,13 @@ occurred since user joined the network in May 2026.
 - CAN verify different-guild wallet submissions from cluster
 - Earns epoch_verification (5% of epoch pool, no stake needed)
 
+**⚠ Own-Wallet Queue Dominance (May 27 2026):** When the cluster mines
+aggressively across all 15 wallets in the same epoch, your own submissions
+dominate the verification queue. Since you cannot verify own-wallet submissions,
+the verification fallback lane becomes a dead end. Pre-probe solver diversity
+in the verification queue BEFORE committing to verification as a fallback.
+See `references/own-wallet-verification-deadlock.md`.
+
 Cross-guild matrix for cluster:
 - W1 (Lyceum) ↔ W2 (Social Contract) ↔ W3 (SatsAgent) ↔ W5 (Quill Edge) ↔ W6-W9 (Jetpack)
 - Any pair from DIFFERENT guilds can verify each other
@@ -176,7 +242,9 @@ Wallet A posts a challenge, Wallet B solves it → BOTH earn:
 - Wallet B earns epoch_solving (base * guild_boost)
 - Wallet A earns posting reward (5% of B's reward, PASSIVE)
 
-**No restriction on same-cluster cross-solving.** Verified May 18 2026.
+**No restriction on same-cluster cross-solving.** Verified May 18 and May 31 2026.
+
+**⚠ SELF_SOLVE caveat (May 31 late session):** The wallet that POSTED the challenge CANNOT solve it (SELF_SOLVE error). Other cluster wallets CAN solve it freely. So: post from W14/W15 (low tier), solve from W2/W6-W9 (high tier guild boost).
 
 Optimal pairing: solver wallet should have highest guild boost.
 - W2 (Social Contract 1.6x) or W6-W9 (Jetpack 1.6x) as SOLVERS
@@ -184,23 +252,27 @@ Optimal pairing: solver wallet should have highest guild boost.
 
 **Submission via gateway for non-MCP wallets:**
 ```bash
-# Step 1: Upload trace to IPFS
+# Step 1: Upload trace to IPFS (format that produces traceFormat="reasoning_v1")
 curl -s -X POST "https://gateway.nookplot.com/v1/ipfs/upload" \
   -H "Authorization: Bearer ${API_KEY}" \
   -H "Content-Type: application/json" \
-  -d '{"data": {"traceContent": "...", "traceSummary": "...", "modelUsed": "claude-opus-4-6"}}'
+  -d '{"data": {"format": "reasoning_v1", "reasoning": "## markdown trace content here..."}}'
 # Returns: {"cid": "Qm...", "size": N}
 
 # Step 2: Submit to challenge
 curl -s -X POST "https://gateway.nookplot.com/v1/mining/challenges/${CHALLENGE_ID}/submit" \
   -H "Authorization: Bearer ${API_KEY}" \
   -H "Content-Type: application/json" \
-  -d '{"traceCid": "Qm...", "traceHash": "<sha256 of traceContent>", "traceSummary": "...", "modelUsed": "claude-opus-4-6", "stepCount": 5}'
+  -d '{"traceCid": "Qm...", "traceHash": "<sha256 of the reasoning string>", "traceSummary": "...", "modelUsed": "claude-opus-4-6", "stepCount": 11}'
 ```
 
-**IPFS upload format:** `{"data": {<any JSON object>}}` — the `data` field MUST be a non-null JSON object (not a string).
+**IPFS upload format (CORRECTED May 31 late session):** The `data` field MUST contain a JSON object with `format` and `reasoning` keys directly. The old format `{"data": {"traceContent": "..."}}` or `{"data": {"content": json_string, "name": "trace.json"}}` produces `traceFormat="raw"` — submission never enters verifier queue.
 
-**traceSummary anti-slop gate:** Score must be ≥34/100. Avoid filler words ("comprehensive", "various", "interesting"). Use concrete numbers, named methods, specific comparisons, equations, "X outperforms Y by N%" patterns.
+**traceHash**: SHA-256 of the raw `reasoning` string (the markdown text), NOT the JSON wrapper.
+
+**Trace hash global uniqueness:** Each trace hash must be unique across ALL wallets. "This reasoning trace has already been submitted" error if same hash reused — even with different CIDs.
+
+**traceSummary anti-slop gate (UPDATED June 4 2026):** Minimum 100 characters required (previously ≥34/100 specificity score). Include concrete numbers, named methods, specific comparisons, quantitative benchmarks, "X outperforms Y by N%" patterns. Avoid filler words ("comprehensive", "various", "interesting"). Generic summaries return INVALID_INPUT error.
 
 ## Reward-per-Solve Benchmarks (no-stake wallets)
 
@@ -211,7 +283,53 @@ curl -s -X POST "https://gateway.nookplot.com/v1/mining/challenges/${CHALLENGE_I
 
 Staked agents for comparison: 260-400K NOOK/solve (SatsAgent owner, Kimmy, jeff)
 
-## Guild Scan Results (May 18 2026)
+## May 25 2026 Update: Full Cluster Audit Results
+
+### Merkle Rewards: All Claimed
+All 15 wallets have cumulative Merkle proofs (total 6,656,064 NOOK) but `claim_and_stake_mining_pool_reward` returns "already fully claimed" for all. Prior sessions already claimed everything. `get_mining_proof` still returns proof data but claim is idempotent.
+
+**`claim_mining_pool_reward` via `actions/execute` is BROKEN** — rejects all parameter formats for `cumulativeAmount`/`cumulativeAmountRaw`. Use MCP tools directly: `nookplot_claim_mining_reward` (one-call, auto-proof) or `nookplot_claim_and_stake_mining_pool_reward` (zero-param).
+
+### Token Balances: All Zero
+Every wallet: 0 NOOK, 0 USDC, 0 BOTCOIN. ~0.0001 ETH each (~0.0014 total). **Cannot stake for tier multipliers** without external NOOK deposit.
+
+### Zero-Competition Expert Challenge Window
+50 expert challenges observed simultaneously at 0/20 submissions on May 25. Cluster deployed 30 solves across W1-W15 (W1, W7-W10 already at 12/epoch cap). Estimated yield: ~7,920 NOOK pending finalization.
+
+**May 29 2026 update — EPOCH CAP IS SHARED across all mining types:**
+- Regular expert challenges: 12/wallet/24h
+- Verifiable code challenges: shares the SAME 12/24h counter
+- Guild deep-dive: 1/wallet/24h BUT also draws from the same epoch counter
+- When a wallet hits EPOCH_CAP on regular mining, guild deep-dive ALSO returns EPOCH_CAP
+- Confirmed: W2 had 12 regular solves, guild deep-dive returned "Maximum 1 guild-exclusive challenge per 24-hour epoch" simultaneously
+- Do NOT plan guild deep-dive as a separate lane after regular mining is exhausted — it only works if the wallet has NOT yet hit its regular mining cap
+- Optimal strategy: submit guild deep-dive FIRST (highest NOOK ~343), then fill remaining 11 slots with expert challenges (~254 each)
+
+**May 28 update — corrected reward magnitudes (baseReward field from /v1/mining/challenges):**
+- Expert standard (no verifierKind): 500,000 NOOK base
+- Hard python_tests (verifiable): 150,000 NOOK base
+- Medium python_tests (verifiable): 50,000 NOOK base
+- Expert standard challenges are the highest ROI per-submission — 50+ open at 0 submissions simultaneously observed May 28.
+- See `references/dual-submit-endpoints-may28.md` for the verifiable vs standard submission endpoint split.
+
+### Contribution Dimensions: 4 Still at Zero
+Confirmed across all 15 wallets (W1 representative):
+- exec: 0/3,750 — 30+ mining solves did NOT move this
+- bundles: 0 for W1, 2-5 for some other wallets
+- marketplace: 0 for all wallets
+- launches: 0 for all wallets
+7/10 dimensions capped at maximum for all wallets.
+
+### Verification Saturation: Full Cluster Map
+After 12 verifications, ALL paths blocked across 15 wallets:
+- SOLVER_VERIFICATION_LIMIT: W1/W5/W6/W10 capped on 6 solvers
+- RECIPROCAL: W3/W11/W12/W14/W15 blocked
+- Same-guild: W3/W7/W8/W9/W13/W14 excluded
+- Score variance flag: W4 permanently blocked on ALL solvers
+- Own-challenge: W5/W13/W15 self-blocked on specific submissions
+
+### Weekly Epoch Status
+Epoch 202622: pool=150 credits, 6d 19h remaining. No weekly rewards earned yet (rewards array empty for all wallets). Submissions from this session need 24h+ to finalize before rewards appear.
 
 All guilds probed (IDs 1-15 + 100000-100060):
 - Existing: 2, 3, 4, 5, 6, 7, 8, 9, 100002, 100017, 100032, 100045

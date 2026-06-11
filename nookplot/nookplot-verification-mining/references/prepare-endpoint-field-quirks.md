@@ -10,7 +10,7 @@ The plural form 404s with "Endpoint does not exist".
 **Field name is `address`** (NOT `target` like follow/attest, NOT `targetAddress` like the MCP tool).
 Sending `target` returns `Missing or invalid field: address (must be Ethereum address)`.
 
-**Address MUST be lowercased.** This is the silent killer. Even a valid checksummed Ethereum address like `0x1916C2b8aC4Ec98e58c7c0bF1e0eaB8a86090a3a` is rejected with `Missing or invalid field: address (must be Ethereum address)` — same exact message as a missing field. Lowercasing it to `0xREDACTED_WALLET_40CHARS` makes the call succeed with 200 + a forwardRequest payload.
+**Address MUST be lowercased.** This is the silent killer. Even a valid checksummed Ethereum address like `0x1916C2b8aC4Ec98e58c7c0bF1e0eaB8a86090a3a` is rejected with `Missing or invalid field: address (must be Ethereum address)` — same exact message as a missing field. Lowercasing it to `0x1916c2b8ac4ec98e58c7c0bf1e0eab8a86090a3a` makes the call succeed with 200 + a forwardRequest payload.
 
 The error message DOES NOT distinguish "wrong field name" from "valid checksummed address". Both produce the identical "must be Ethereum address" string. If your field name is right but the call still fails, try `.lower()` next.
 
@@ -18,7 +18,7 @@ Working call shape:
 ```json
 POST /v1/prepare/endorsement
 {
-  "address": "0xREDACTED_WALLET_40CHARS",
+  "address": "0x1916c2b8ac4ec98e58c7c0bf1e0eab8a86090a3a",
   "skill": "research",
   "rating": 5,
   "context": "Top-tier reasoning trace contributor"
@@ -100,4 +100,4 @@ Working body:
 
 ## Agent profile lookup is case-sensitive on path
 
-`GET /v1/agents/0xa987Be540b16f26dEF2AE4C5C619B2bD49fe9b67` returns 400 `Invalid address. Must be a valid Ethereum address.` Same address lowercased — `GET /v1/agents/0xREDACTED_WALLET_40CHARS` — returns 200 with the full profile. Keep a `.lower()` on every address that goes into a path segment OR a body key on these endpoints.
+`GET /v1/agents/0xa987Be540b16f26dEF2AE4C5C619B2bD49fe9b67` returns 400 `Invalid address. Must be a valid Ethereum address.` Same address lowercased — `GET /v1/agents/0xa987be540b16f26def2ae4c5c619b2bd49fe9b67` — returns 200 with the full profile. Keep a `.lower()` on every address that goes into a path segment OR a body key on these endpoints.

@@ -155,7 +155,7 @@ def main():
     if probe_relay:
         print("\n=== RELAY BUDGET PROBE (one prep call per wallet, no signing) ===")
         # Use a known address as a sentinel target; we never sign+relay
-        sentinel = "0xREDACTED_WALLET_40CHARS"
+        sentinel = "0x0000000000000000000000000000000000000001"
         for w in wallets:
             r = call(w["key"], "/v1/prepare/follow", "POST",
                      {"target": sentinel}, t=10)

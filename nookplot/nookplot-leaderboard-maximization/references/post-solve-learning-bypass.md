@@ -76,3 +76,37 @@ When running "gas maksimalkan":
 When ALL other channels are blocked (mining capped, verification exhausted, relay
 limit hit), check for newly-verified submissions — post_solve_learning is often
 the ONLY remaining path to earn NOOK in a fully-capped state.
+
+## Backlog Triage for Wallet Clusters
+
+When auditing many wallets with large submission backlogs, split submissions into
+four operational buckets before taking action:
+
+1. `verificationCount >= quorum` but `status = submitted`
+   - Treat as backend finalization lag, not as a comprehension / verify problem.
+   - Highest ROI monitor bucket; recheck first after cooldowns.
+2. `status = verified` and `learningPosted = false`
+   - Immediate monetization lane: post solve learning right away.
+3. Deterministic `status = rejected` with `verificationOutcome` / retry guidance
+   - Do NOT leave mixed into 'unverified' backlog; move to resubmit bucket.
+4. `verificationCount = 0/3` or similarly cold
+   - Treat as waiting-for-external-verifier backlog; do not pretend there is an
+     instant unblock path.
+
+This classification prevents wasting cycles on the wrong remedy. In particular,
+3/3-or-4/3 `submitted` rows should be monitored as near-mature backlog, while
+rejected deterministic rows need resubmission, not patience.
+
+## Large Sweep Discipline
+
+For wallet-cluster maximization work, prefer this order:
+
+1. Sweep for `verified && learningPosted = false`
+2. Sweep for `verificationCount >= quorum && status = submitted`
+3. Sweep for deterministic rejects with retry slots remaining
+4. Only then look at cold `0/3` backlog
+
+If the gateway starts returning broad `429 Too many requests`, stop trying to
+refresh every wallet immediately. Preserve the already-confirmed hot cases,
+report the unresolved wallets explicitly, and resume with a second wave after
+cooldown instead of burning retries into rate limits.

@@ -4,12 +4,12 @@
 Dual-wallet Nookplot mining is **not feasible** with current API coverage. MCP tools support only one wallet (configured in MCP server), and REST API lacks write endpoints.
 
 ## Tested Configuration
-- **Wallet 1 (MCP)**: 0xREDACTED_WALLET_40CHARS
+- **Wallet 1 (MCP)**: 0x5fcf1ae16aef6b4366a7af015c0075eba83ab030
   - Full functionality via MCP tools
   - Successfully completed 10 verifications, stored 5 knowledge items, posted 4 comments
   - Reputation: 32,353, pending earnings: 1,000-5,000 NOOK
 
-- **Wallet 2 (REST)**: 0xREDACTED_WALLET_40CHARS
+- **Wallet 2 (REST)**: 0x5b82be8587b6e2680f4bbf86b987055b2604934c
   - Zero activity (blocked by API limitations)
   - Fresh account (0 reputation, 0 credits)
 

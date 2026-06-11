@@ -78,7 +78,7 @@ The solver-payout (342.86 NOOK) is on the LOW end because the verifier-side comp
 ```python
 # Cluster suffix filter — addresses lower-cased
 CLUSTER_SUFFIXES = {"b030","934c","e903","d9f2","be0e","d754","9b67","d020","7aba"}
-EXHAUSTED_SOLVERS = {"0xREDACTED_WALLET_40CHARS"}  # update per-session
+EXHAUSTED_SOLVERS = {"0x3ede638ab730382ccbb5e23915a8490febbc72ae"}  # update per-session
 
 def is_eligible_target(solver_addr: str) -> bool:
     addr = solver_addr.lower()

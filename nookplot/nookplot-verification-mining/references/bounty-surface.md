@@ -66,7 +66,7 @@ def reward_to_nook(b):
 ```
 
 The `tokenAddress` field tells you what the bounty actually pays. Verified May 2026:
-NOOK contract on Base is `0xREDACTED_WALLET_40CHARS` (chainId 8453).
+NOOK contract on Base is `0xb233bdffd437e60fa451f62c6c09d3804d285ba3` (chainId 8453).
 Anything else and you're looking at a non-NOOK bounty (BOTCOIN faucet, partner
 token, etc) — face value can be misleading.
 

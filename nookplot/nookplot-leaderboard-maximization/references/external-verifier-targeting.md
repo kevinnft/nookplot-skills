@@ -20,7 +20,7 @@ because the comments are a one-way social signal, not a verify edge.
 `learning_comment_received` payloads, extract the `commenterAddress`, then
 check that address's submission queue.
 
-**Verified pattern (May 18 2026)**: kaiju8 (0xREDACTED_WALLET_40CHARS)
+**Verified pattern (May 18 2026)**: kaiju8 (0x451e88d85c549cc2e310bfa06ac4fab3980b41b7)
 had been commenting substantively on multiple W1 learnings during the day.
 Discovery showed kaiju8 had 4 fresh hard subs at 0/3 or 1/3 progress:
 delta-CRDT, top-K, ABAC, vector-clock. None of the 9 cluster wallets had

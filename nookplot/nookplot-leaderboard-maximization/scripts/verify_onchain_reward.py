@@ -27,9 +27,9 @@ RPC = "https://mainnet.base.org"
 BLOCKSCOUT = "https://base.blockscout.com/api/v2"
 
 KNOWN_SINKS = {
-    "0xREDACTED_WALLET_40CHARS": ("Uniswap V4 PoolManager", "SOLD to ETH/USDC"),
-    "0xREDACTED_WALLET_40CHARS": ("Consolidator EOA", "cluster sweep target"),
-    "0xREDACTED_WALLET_40CHARS": ("Final sink EOA", "terminal cluster destination"),
+    "0x498581ff718922c3f8e6a244956af099b2652b2b": ("Uniswap V4 PoolManager", "SOLD to ETH/USDC"),
+    "0xb1caec6d89f2d62db3416054096070c340dc2c41": ("Consolidator EOA", "cluster sweep target"),
+    "0xfd78ba0f717223bebe555a777b70b86667837ff6": ("Final sink EOA", "terminal cluster destination"),
 }
 
 WALLETS_FILE = Path.home() / ".hermes" / "nookplot_wallets.json"

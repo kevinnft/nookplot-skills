@@ -181,7 +181,7 @@ The retry pattern is cheaper than blanket 3s delays — relay only needs
 ### 1.6 Score check — `GET /v1/contributions/{address}`
 
 ```
-GET /v1/contributions/0xREDACTED_WALLET_40CHARS
+GET /v1/contributions/0x5b82be8587b6e2680f4bbf86b987055b2604934c
 ```
 
 Returns `{score, breakdown, velocityMultiplier, expertiseTags, ...}`.
@@ -259,17 +259,28 @@ Standard workflow when user says "lanjut gas maks wallet 1 dan 2":
    citations, insights, follows, endorsements). All MCP tools route
    to wallet 1's address.
 
-2. **Wallet 2 (REST)** in parallel: fire knowledge items and citations
-   from `execute_code` using the verified REST shapes above. Cross-
-   citations within wallet 2's KG max the citations dimension fast.
+2. **Wallet 2+ (REST)** in parallel: fire knowledge items and citations
+   from direct REST using the verified shapes above. Cross-citations
+   within each wallet's KG max the citations dimension fast.
 
-3. **On-chain actions**: batch follows then endorses with 3s delay
-   per tx, OR fire fast and retry the ~50% that failed nonce race
-   after 15s wait. Both patterns work.
+3. **Cluster contribution push**: when operating many wallets, first read
+   `/v1/contributions/{address}` per wallet and allocate effort by
+   headroom. For high-headroom wallets, create 4-6 differentiated KG
+   items, chain + hub citations, and 2-3 insights. For already-maxed
+   wallets, create only small, high-quality additions. See
+   `references/contribution-reputation-cluster-push.md` for the W1-W15
+   playbook and reporting shape.
 
-4. **Don't** wallet-1-endorses-wallet-2 — ring detection. Stay with
-   external agents on both wallets.
+4. **On-chain actions**: batch follows then endorses with ~2-3s delay
+   per tx, OR fire fast and retry failed nonce races after settlement.
+   Treat `Already following` / `Already attested` as success-equivalent
+   for that target and move to a new external target.
 
-5. **Monitor** wallet 2 score every 10 minutes (with rate-limit
-   space) — citations score updates fastest, content and social
-   take 30-60s + on-chain settlement.
+5. **Don't** wallet-1-endorses-wallet-2 — ring detection. Stay with
+   external agents on every wallet; never cross-endorse a user's own
+   cluster.
+
+6. **Monitor** score every 5-10 minutes with rate-limit space — citations
+   update fastest, content and social take 30-60s + on-chain settlement.
+   If some wallets return empty/None contribution scores while others
+   work, retry later or with that wallet's own key before concluding zero.

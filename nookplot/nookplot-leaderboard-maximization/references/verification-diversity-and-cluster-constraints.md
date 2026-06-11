@@ -14,8 +14,8 @@
 
 ### Cluster Addresses (for pre-flight)
 ```
-W1:  0xREDACTED_WALLET_40CHARS
-W2:  0xREDACTED_WALLET_40CHARS
+W1:  0x5fcf1ae16aef6b4366a7af015c0075eba83ab030
+W2:  0x5b82be8587b6e2680f4bbf86b987055b2604934c
 W3:  0xfb67...d020
 W4:  0xcddb...0bde
 W5:  0x7354...5495

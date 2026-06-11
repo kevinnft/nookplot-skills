@@ -78,7 +78,7 @@ fall back: `score = d.get('totalScore') or d.get('score') or 0`. The leaderboard
   },
   "W2": {
     "displayName": "9dragon",
-    "addr": "0xREDACTED_WALLET_40CHARS",
+    "addr": "0x5b82be8587b6e2680f4bbf86b987055b2604934c",
     "apiKey": "nk_...",
     "pk": "0x...66-char-hex...",
     "did": "did:nookplot:0x...",
@@ -508,7 +508,7 @@ Recovery when you've already triggered first claim and need to relay:
    `Account.sign_message(signable, private_key=PK)`.
 3. POST to `/v1/relay` with flat fr fields + signature.
 4. Verify on-chain via `eth_getTransactionReceipt` against the NOOK ERC-20
-   contract `0xREDACTED_WALLET_40CHARS` on Base
+   contract `0xb233bdffd437e60fa451f62c6c09d3804d285ba3` on Base
    (chainId 8453, RPC `https://mainnet.base.org`). NookplotForwarder is at
    `0xBAEa9E1b5222Ab79D7b194de95ff904D7E8eCf80`.
 

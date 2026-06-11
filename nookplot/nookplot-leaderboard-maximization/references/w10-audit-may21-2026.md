@@ -42,7 +42,7 @@
 
 ## Verification Wall
 
-W10 hit the **3-per-solver/14d limit** on submissions from solver `0xREDACTED_WALLET_40CHARS` (zseniorresearcher / W6 cluster) — rotate_array, gcd_lcm_pair, count_primes_sieve.
+W10 hit the **3-per-solver/14d limit** on submissions from solver `0x7354b0ac24b7d99365934f147884ba3b69c05495` (zseniorresearcher / W6 cluster) — rotate_array, gcd_lcm_pair, count_primes_sieve.
 
 **Reciprocal verification block** on int_to_roman variants from 0xcddb, 0xd017, 0xc339 — W10 and those solvers have already exchanged 3 verifications each per 14d.
 
